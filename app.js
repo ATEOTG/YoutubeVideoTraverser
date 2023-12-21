@@ -2,11 +2,14 @@
 const ytd_app = document.querySelector("ytd-app");
 
 function segmentHandler(segment_children) {
+  let segmentString = "";
   //   browser console log has a limit but it contains everything
   for (let i = 0; i < segment_children.length; i++) {
     const textContent = segment_children[i].childNodes[2].ariaLabel;
-    console.log(textContent);
+    segmentString += "::" + textContent.toLowerCase();
   }
+  const timeStampStringList = segmentString.split("::");
+  console.log(timeStampStringList);
 }
 
 function transcriptHandler(transcript_btn) {
