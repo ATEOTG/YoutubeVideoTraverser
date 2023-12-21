@@ -9,5 +9,9 @@
       "matches": ["*://www.youtube.com/*"],
       "js": ["app.js"]
     }
-  ]
+  ],
+  "action": {
+    "default_title": "Youtube Video Traverser",
+    "default_popup": "index.html"
+  }
 }
