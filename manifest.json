@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "YoutubeTraverser",
+  "description": "Search through a YouTube video for keywords and get timestamps for relevant sections of the video based on keyword searched",
+  "version": "1.0",
+  "author": "ATEOTG",
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["app.js"]
+    }
+  ]
+}
