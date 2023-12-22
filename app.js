@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-function searchResultHandler(string) {
+export function searchResultHandler(string) {
   const res = [];
   for (let i = 0; i < timeStampStringList.length; i++) {
     if (timeStampStringList[i].includes(string)) {

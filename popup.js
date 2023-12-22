@@ -1,4 +1,4 @@
-// import { segmentHandler } from "./app.js";
+import { searchResultHandler } from "./app.js";
 
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
@@ -8,12 +8,14 @@ console.log("Excecuting popup.js");
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const activeTabId = tabs[0].id;
 
-  // Load app.js into the current active tab
-  chrome.scripting
-    .executeScript({ target: { tabId: activeTabId }, files: ["app.js"] })
-    .then(() => {
-      console.log("Script injected");
-    });
+  chrome.scripting.executeScript({
+    target: { tabId: activeTabId },
+    function: (search) => {
+      // This function is executed in the context of the content script
+      window.dispatchEvent(new CustomEvent("searchEvent", { detail: search }));
+    },
+    args: [searchValue.value.toLowerCase()], // Use value instead of textContent
+  });
 });
 
 searchValue.addEventListener("keydown", (e) => {
@@ -24,6 +26,14 @@ searchValue.addEventListener("keydown", (e) => {
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const search = searchValue.textContent.toLowerCase();
-  console.log(search);
-  chrome.runtime.sendMessage({ action: "executeScript", argument: search });
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTabId = tabs[0].id;
+
+    chrome.scripting.executeScript({
+      target: { tabId: activeTabId },
+      function: searchResultHandler,
+      args: [search],
+    });
+  });
 });
