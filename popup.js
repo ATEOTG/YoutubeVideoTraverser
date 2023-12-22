@@ -21,6 +21,13 @@ function searchResultHandler(string, timeStamps) {
   return res;
 }
 
+function addItemToList(text) {
+  const listItem = document.createElement("li");
+  listItem.textContent = text;
+  listItem.classList.add("search-list-item");
+  resultList.appendChild(listItem);
+}
+
 searchValue.addEventListener("keydown", (e) => {
   const inputSearch = e.target.value;
   searchValue.textContent = inputSearch;
@@ -32,4 +39,9 @@ searchForm.addEventListener("submit", async (e) => {
 
   const timeStamps = await fetchTimeStamp();
   const results = searchResultHandler(search, timeStamps);
+
+  resultList.innerHTML = "";
+  for (const timeStamp of results) {
+    addItemToList(timeStamp);
+  }
 });
