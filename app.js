@@ -1,5 +1,27 @@
-// console.log("Content Script is running");
-const ytd_app = document.querySelector("ytd-app");
+let timeStampStringList = [];
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "executeScript") {
+    chrome.scripting.executeScript({
+      target: { tabId: sender.tab.id },
+      function: searchResultHandler,
+      args: message.argument,
+    });
+  }
+});
+
+function searchResultHandler(string) {
+  const res = [];
+  for (let i = 0; i < timeStampStringList.length; i++) {
+    if (timeStampStringList[i].includes(string)) {
+      res.push(timeStampStringList[i]);
+    }
+  }
+
+  console.log(string);
+  console.log(res);
+  return res;
+}
 
 function segmentHandler(segment_children) {
   let segmentString = "";
@@ -8,7 +30,8 @@ function segmentHandler(segment_children) {
     const textContent = segment_children[i].childNodes[2].ariaLabel;
     segmentString += "::" + textContent.toLowerCase();
   }
-  const timeStampStringList = segmentString.split("::");
+  timeStampStringList = segmentString.split("::");
+
   console.log(timeStampStringList);
 }
 
@@ -35,6 +58,8 @@ function isYouTubeVideoPage() {
 }
 
 function applyModifications() {
+  const ytd_app = document.querySelector("ytd-app");
+
   setTimeout(() => {
     const transcript_btn = document.querySelector(
       'button[aria-label="Show transcript"]'

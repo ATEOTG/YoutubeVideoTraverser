@@ -7,11 +7,15 @@
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
-      "js": ["app.js"]
+      "js": ["dist/bundle.js"]
     }
   ],
   "action": {
     "default_title": "Youtube Video Traverser",
     "default_popup": "index.html"
+  },
+  "permissions": ["activeTab", "tabs", "scripting"],
+  "background": {
+    "service_worker": "background.js"
   }
 }
