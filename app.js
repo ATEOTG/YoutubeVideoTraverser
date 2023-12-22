@@ -5,19 +5,6 @@
     applyModifications(isVideoPage);
   });
 
-  // function searchResultHandler(string) {
-  //   const res = [];
-  //   for (let i = 0; i < timeStampStringList.length; i++) {
-  //     if (timeStampStringList[i].includes(string)) {
-  //       res.push(timeStampStringList[i]);
-  //     }
-  //   }
-
-  //   console.log(string);
-  //   console.log(res);
-  //   return res;
-  // }
-
   function segmentHandler(segment_children) {
     let segmentString = "";
     for (let i = 0; i < segment_children.length; i++) {
@@ -25,6 +12,7 @@
       segmentString += "::" + textContent.toLowerCase();
     }
     const timeStampStringList = segmentString.split("::");
+    timeStampStringList.shift();
 
     chrome.storage.local.set({ timeStamps: timeStampStringList });
   }

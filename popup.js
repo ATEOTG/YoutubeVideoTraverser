@@ -10,10 +10,22 @@ function fetchTimeStamp() {
   });
 }
 
+function separateTime(textArray) {
+  const separatedData = textArray.map((text) => {
+    const timeRegex =
+      /^(\d+)\s*hour(?:s)?(?:,\s*(\d+)\s*minute(?:s)?)?(?:,\s*(\d+)\s*second(?:s)?)?|^\d+\s*minute(?:s)?(?:,\s*(\d+)\s*second(?:s)?)?|^\d+\s*second(?:s)?/g;
+    const matches = text.match(timeRegex);
+
+    return [matches, text.replace(timeRegex, "").trim()];
+  });
+
+  return separatedData;
+}
+
 function searchResultHandler(string, timeStamps) {
   const res = [];
   for (let i = 0; i < timeStamps.length; i++) {
-    if (timeStamps[i].includes(string)) {
+    if (timeStamps[i][1].includes(string)) {
       res.push(timeStamps[i]);
     }
   }
@@ -21,9 +33,15 @@ function searchResultHandler(string, timeStamps) {
   return res;
 }
 
-function addItemToList(text) {
+function addItemToList(textArr) {
   const listItem = document.createElement("li");
-  listItem.textContent = text;
+
+  const spanElement = document.createElement("span");
+  spanElement.textContent = textArr[0];
+
+  listItem.appendChild(spanElement);
+  listItem.appendChild(document.createTextNode(textArr[1]));
+
   listItem.classList.add("search-list-item");
   resultList.appendChild(listItem);
 }
@@ -38,9 +56,11 @@ searchForm.addEventListener("submit", async (e) => {
   const search = " " + searchValue.value.toLowerCase() + " ";
 
   const timeStamps = await fetchTimeStamp();
-  const results = searchResultHandler(search, timeStamps);
+  const timeStampArray = separateTime(timeStamps);
+  const results = searchResultHandler(search, timeStampArray);
 
   resultList.innerHTML = "";
+  searchValue.value = "";
   for (const timeStamp of results) {
     addItemToList(timeStamp);
   }
