@@ -1,22 +1,6 @@
-const { timeStamp } = require("console");
-
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
 const resultList = document.querySelector(".search-list");
-
-console.log("Excecuting popup.js");
-// chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//   const activeTabId = tabs[0].id;
-
-//   chrome.scripting.executeScript({
-//     target: { tabId: activeTabId },
-//     function: (search) => {
-//       // This function is executed in the context of the content script
-//       window.dispatchEvent(new CustomEvent("searchEvent", { detail: search }));
-//     },
-//     args: [searchValue.value.toLowerCase()], // Use value instead of textContent
-//   });
-// });
 
 function fetchTimeStamp() {
   return new Promise((res) => {
@@ -26,18 +10,16 @@ function fetchTimeStamp() {
   });
 }
 
-// function searchResultHandler(string) {
-//   const res = [];
-//   for (let i = 0; i < timeStampStringList.length; i++) {
-//     if (timeStampStringList[i].includes(string)) {
-//       res.push(timeStampStringList[i]);
-//     }
-//   }
+function searchResultHandler(string, timeStamps) {
+  const res = [];
+  for (let i = 0; i < timeStamps.length; i++) {
+    if (timeStamps[i].includes(string)) {
+      res.push(timeStamps[i]);
+    }
+  }
 
-//   console.log(string);
-//   console.log(res);
-//   return res;
-// }
+  return res;
+}
 
 searchValue.addEventListener("keydown", (e) => {
   const inputSearch = e.target.value;
@@ -49,5 +31,5 @@ searchForm.addEventListener("submit", async (e) => {
   const search = searchValue.value.toLowerCase();
 
   const timeStamps = await fetchTimeStamp();
-  console.log(timeStamps);
+  const results = searchResultHandler(search, timeStamps);
 });
