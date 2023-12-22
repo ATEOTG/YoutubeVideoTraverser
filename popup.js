@@ -35,7 +35,7 @@ searchValue.addEventListener("keydown", (e) => {
 
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const search = searchValue.value.toLowerCase();
+  const search = " " + searchValue.value.toLowerCase() + " ";
 
   const timeStamps = await fetchTimeStamp();
   const results = searchResultHandler(search, timeStamps);
