@@ -20,7 +20,6 @@
 
   function segmentHandler(segment_children) {
     let segmentString = "";
-    //   browser console log has a limit but it contains everything
     for (let i = 0; i < segment_children.length; i++) {
       const textContent = segment_children[i].childNodes[2].ariaLabel;
       segmentString += "::" + textContent.toLowerCase();
@@ -28,11 +27,6 @@
     const timeStampStringList = segmentString.split("::");
 
     chrome.storage.local.set({ timeStamps: timeStampStringList });
-    // console.log(
-    //   chrome.storage.local.get("timeStamps").then((res) => {
-    //     console.log(res.timeStamps);
-    //   })
-    // );
   }
 
   function transcriptHandler(transcript_btn) {
@@ -70,13 +64,3 @@
     }, 1000);
   }
 })();
-
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//   if (message.action === "executeScript") {
-//     chrome.scripting.executeScript({
-//       target: { tabId: sender.tab.id },
-//       function: searchResultHandler,
-//       args: message.argument,
-//     });
-//   }
-// });

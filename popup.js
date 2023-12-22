@@ -1,3 +1,5 @@
+const { timeStamp } = require("console");
+
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
 const resultList = document.querySelector(".search-list");
@@ -16,14 +18,36 @@ console.log("Excecuting popup.js");
 //   });
 // });
 
+function fetchTimeStamp() {
+  return new Promise((res) => {
+    chrome.storage.local.get("timeStamps", (obj) => {
+      res(obj["timeStamps"] ? obj["timeStamps"] : []);
+    });
+  });
+}
+
+// function searchResultHandler(string) {
+//   const res = [];
+//   for (let i = 0; i < timeStampStringList.length; i++) {
+//     if (timeStampStringList[i].includes(string)) {
+//       res.push(timeStampStringList[i]);
+//     }
+//   }
+
+//   console.log(string);
+//   console.log(res);
+//   return res;
+// }
+
 searchValue.addEventListener("keydown", (e) => {
   const inputSearch = e.target.value;
   searchValue.textContent = inputSearch;
 });
 
-searchForm.addEventListener("submit", (e) => {
+searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const search = searchValue.value.toLowerCase();
 
-  chrome.runtime.sendMessage({ action: "executeScript", argument: search });
+  const timeStamps = await fetchTimeStamp();
+  console.log(timeStamps);
 });
