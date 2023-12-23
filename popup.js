@@ -1,6 +1,10 @@
+import { getActiveTabURL } from "./utils.js";
+
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
 const resultList = document.querySelector(".search-list");
+const notOnPage = document.querySelector(".not-on-page-cont");
+const onPage = document.querySelector(".on-page-cont");
 
 function fetchTimeStamp() {
   return new Promise((res) => {
@@ -64,5 +68,17 @@ searchForm.addEventListener("submit", async (e) => {
   for (const timeStamp of results) {
     if (timeStamp[0] === null) continue;
     addItemToList(timeStamp);
+  }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const activeTab = await getActiveTabURL();
+  console.log(activeTab.url);
+  if (activeTab.url.includes("youtube.com/watch")) {
+    notOnPage.style.display = "none";
+    onPage.style.display = "block";
+  } else {
+    onPage.style.display = "none";
+    notOnPage.style.display = "block";
   }
 });

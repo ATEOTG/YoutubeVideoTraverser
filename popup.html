@@ -29,15 +29,29 @@
         border-bottom: 0.5px solid grey;
         padding-bottom: 0.5rem;
       }
+
+      .not-on-page-cont {
+        display: none;
+      }
+
+      .on-page-cont {
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <form id="search-form">
-      <label for="search">Search keyword(s) in Video</label>
-      <input type="text" name="search" id="search" placeholder="Keyword..." />
-    </form>
+    <div class="not-on-page-cont">
+      <h2>You're currently not on a Youtube Video Page!</h2>
+    </div>
+    <div class="on-page-cont">
+      <form id="search-form">
+        <label for="search">Search keyword(s) in Video</label>
+        <input type="text" name="search" id="search" placeholder="Keyword..." />
+      </form>
 
-    <ul class="search-list"></ul>
+      <ul class="search-list"></ul>
+    </div>
+
     <script type="module" src="./popup.js"></script>
   </body>
 </html>
