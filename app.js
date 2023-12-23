@@ -17,38 +17,82 @@
     chrome.storage.local.set({ timeStamps: timeStampStringList });
   }
 
-  function transcriptHandler(transcript_btn) {
+  function transcriptHandler() {
+    const transcript_btn = document.querySelector(
+      'button[aria-label="Show transcript"]'
+    );
     transcript_btn.click();
 
-    let segments_cont;
-
-    setTimeout(() => {
-      segments_cont = document.querySelector("#segments-container");
+    const checkInterval = setInterval(() => {
+      const segments_cont = document.querySelector("#segments-container");
       if (segments_cont) {
         const segment_children = segments_cont.childNodes;
         document.querySelector("#panels").style.display = "none";
         segmentHandler(segment_children);
-      } else {
-        document.querySelector("#panels").style.display = "block";
-        transcriptHandler(transcript_btn);
+        clearInterval(checkInterval);
       }
     }, 1000);
   }
 
   function applyModifications(isVideoPage) {
-    const ytd_app = document.querySelector("ytd-app");
     setTimeout(() => {
-      const transcript_btn = document.querySelector(
-        'button[aria-label="Show transcript"]'
-      );
+      const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
 
-      const exists = transcript_btn;
-      if (isVideoPage && exists) {
-        ytd_app.style.border = "10px solid red";
-        transcriptHandler(transcript_btn);
-      } else {
+      console.log("Apply modifications running...");
+      if (!isVideoPage) {
         ytd_app.style.border = "none";
+        return;
       }
+
+      let debounceTimer;
+      let numberObserved = 0;
+      let isObserverDisconnected = false;
+
+      const description_cont = document.querySelector("div#description");
+
+      const applyModificationsWhenReady = () => {
+        clearTimeout(debounceTimer);
+        numberObserved += 1;
+
+        if (isObserverDisconnected) {
+          return;
+        }
+
+        const transcript_btn = document.querySelector(
+          'button[aria-label="Show transcript"]'
+        );
+
+        if (transcript_btn) {
+          ytd_app.style.border = "10px solid red";
+          console.log("Transcript Button Found");
+          observer.disconnect();
+          isObserverDisconnected = true;
+          transcriptHandler();
+        } else if (numberObserved >= 20) {
+          console.log("Exceeded observation limit, disconnecting observer");
+          observer.disconnect();
+          isObserverDisconnected = true;
+          ytd_app.style.border = "none";
+        } else {
+          console.log("Transcript button not found yet");
+          debounceTimer = setTimeout(applyModificationsWhenReady, 1000);
+        }
+      };
+
+      const observer = new MutationObserver(() => {
+        debounceTimer = setTimeout(applyModificationsWhenReady, 1000);
+      });
+
+      observer.observe(description_cont, {
+        childList: true,
+        subtree: true,
+      });
+
+      observer.disconnect = () => {
+        isObserverDisconnected = true;
+        clearTimeout(debounceTimer);
+        MutationObserver.prototype.disconnect.call(observer);
+      };
     }, 1000);
   }
 })();

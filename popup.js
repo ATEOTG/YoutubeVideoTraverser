@@ -53,8 +53,8 @@ searchValue.addEventListener("keydown", (e) => {
 
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const search = " " + searchValue.value.toLowerCase() + " ";
-
+  const search = searchValue.value.toLowerCase();
+  if (search.trim() === "") return;
   const timeStamps = await fetchTimeStamp();
   const timeStampArray = separateTime(timeStamps);
   const results = searchResultHandler(search, timeStampArray);
@@ -62,6 +62,7 @@ searchForm.addEventListener("submit", async (e) => {
   resultList.innerHTML = "";
   searchValue.value = "";
   for (const timeStamp of results) {
+    if (timeStamp[0] === null) continue;
     addItemToList(timeStamp);
   }
 });
