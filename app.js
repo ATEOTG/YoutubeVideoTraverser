@@ -24,7 +24,9 @@
     transcript_btn.click();
 
     const checkInterval = setInterval(() => {
+      console.log("Interval Running...");
       const segments_cont = document.querySelector("#segments-container");
+      console.log("Segment_cont: " + segments_cont);
       if (segments_cont) {
         const segment_children = segments_cont.childNodes;
         document.querySelector("#panels").style.display = "none";
@@ -38,7 +40,6 @@
     setTimeout(() => {
       const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
 
-      console.log("Apply modifications running...");
       if (!isVideoPage) {
         ytd_app.style.border = "none";
         return;
