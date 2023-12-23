@@ -1,4 +1,8 @@
-import { getActiveTabURL } from "./utils.js";
+import {
+  getActiveTabURL,
+  convertTimeFormatToSeconds,
+  separateTime,
+} from "./utils.js";
 
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
@@ -14,18 +18,6 @@ function fetchTimeStamp() {
   });
 }
 
-function separateTime(textArray) {
-  const separatedData = textArray.map((text) => {
-    const timeRegex =
-      /^(\d+)\s*hour(?:s)?(?:,\s*(\d+)\s*minute(?:s)?)?(?:,\s*(\d+)\s*second(?:s)?)?|^\d+\s*minute(?:s)?(?:,\s*(\d+)\s*second(?:s)?)?|^\d+\s*second(?:s)?/g;
-    const matches = text.match(timeRegex);
-
-    return [matches, text.replace(timeRegex, "").trim()];
-  });
-
-  return separatedData;
-}
-
 function searchResultHandler(string, timeStamps) {
   const res = [];
   for (let i = 0; i < timeStamps.length; i++) {
@@ -37,6 +29,16 @@ function searchResultHandler(string, timeStamps) {
   return res;
 }
 
+async function onPlay(e) {
+  const itemTimeStamp = e.target.getAttribute("data-timestamp");
+  const activeTab = await getActiveTabURL();
+
+  chrome.tabs.sendMessage(activeTab.id, {
+    type: "PLAY",
+    value: itemTimeStamp,
+  });
+}
+
 function addItemToList(textArr) {
   const listItem = document.createElement("li");
 
@@ -46,7 +48,14 @@ function addItemToList(textArr) {
   listItem.appendChild(spanElement);
   listItem.appendChild(document.createTextNode(textArr[1]));
 
+  listItem.setAttribute(
+    "data-timestamp",
+    convertTimeFormatToSeconds(textArr[0][0])
+  );
+
   listItem.classList.add("search-list-item");
+
+  listItem.addEventListener("click", onPlay);
   resultList.appendChild(listItem);
 }
 
@@ -73,7 +82,6 @@ searchForm.addEventListener("submit", async (e) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
-  console.log(activeTab.url);
   if (activeTab.url.includes("youtube.com/watch")) {
     notOnPage.style.display = "none";
     onPage.style.display = "block";

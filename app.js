@@ -1,8 +1,14 @@
 (() => {
-  chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    const { type, isVideoPage } = obj;
+  let youtubePlayer;
 
-    applyModifications(isVideoPage);
+  chrome.runtime.onMessage.addListener((obj, sender, response) => {
+    const { type, isVideoPage, value } = obj;
+
+    if (type === "NEW") {
+      applyModifications(isVideoPage);
+    } else if (type === "PLAY") {
+      youtubePlayer.currentTime = value;
+    }
   });
 
   function segmentHandler(segment_children) {
@@ -38,6 +44,7 @@
 
   function applyModifications(isVideoPage) {
     setTimeout(() => {
+      youtubePlayer = document.getElementsByClassName("video-stream")[0];
       const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
 
       if (!isVideoPage) {

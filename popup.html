@@ -10,7 +10,7 @@
         font-size: 15px;
         font-weight: bold;
       }
-      li span {
+      .search-list-item span {
         margin-right: 5px;
         font-weight: bold;
         background-color: #263850;
@@ -29,7 +29,14 @@
         border-bottom: 0.5px solid grey;
         padding-bottom: 0.5rem;
       }
+      .search-list-item:hover {
+        cursor: pointer;
+      }
 
+      .search-list-item:hover span {
+        color: white !important;
+        transition: 0.2s;
+      }
       .not-on-page-cont {
         display: none;
       }
