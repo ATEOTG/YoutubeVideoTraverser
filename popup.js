@@ -30,7 +30,11 @@ function searchResultHandler(string, timeStamps) {
 }
 
 async function onPlay(e) {
-  const itemTimeStamp = e.target.getAttribute("data-timestamp");
+  let target = e.target;
+  while (target.tagName !== "LI") {
+    target = target.parentNode;
+  }
+  const itemTimeStamp = target.getAttribute("data-timestamp");
   const activeTab = await getActiveTabURL();
 
   chrome.tabs.sendMessage(activeTab.id, {

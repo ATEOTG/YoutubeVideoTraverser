@@ -24,83 +24,76 @@
   }
 
   function transcriptHandler() {
-    const transcript_btn = document.querySelector(
-      'button[aria-label="Show transcript"]'
-    );
-    transcript_btn.click();
+    setTimeout(() => {
+      console.log("Transcript Handler running...");
 
-    const checkInterval = setInterval(() => {
-      console.log("Interval Running...");
-      const segments_cont = document.querySelector("#segments-container");
-      console.log("Segment_cont: " + segments_cont);
-      if (segments_cont) {
-        const segment_children = segments_cont.childNodes;
-        document.querySelector("#panels").style.display = "none";
-        segmentHandler(segment_children);
-        clearInterval(checkInterval);
-      }
+      let observations = 0;
+      const checkInterval = setInterval(() => {
+        if (observations === 5) clearInterval(checkInterval);
+        console.log("Interval Running...");
+        const segments_cont = document.querySelector("#segments-container");
+        console.log("Segment_cont: " + segments_cont);
+        if (segments_cont) {
+          const segment_children = segments_cont.childNodes;
+          document.querySelector("#panels").style.display = "none";
+          segmentHandler(segment_children);
+          clearInterval(checkInterval);
+        } else {
+          document.querySelector("#panels").style.display = "block";
+        }
+        observations += 1;
+      }, 1000);
     }, 1000);
   }
 
   function applyModifications(isVideoPage) {
-    setTimeout(() => {
+    console.log("executed!!!");
+    const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
+
+    if (!isVideoPage) {
+      ytd_app.style.border = "none";
+      return;
+    }
+
+    let numberObserved = 0;
+
+    // const description_cont = document.querySelector("div#description");
+
+    const applyModificationsWhenReady = (mutation, observer) => {
       youtubePlayer = document.getElementsByClassName("video-stream")[0];
-      const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
+      console.log("observer running....");
+      numberObserved += 1;
 
-      if (!isVideoPage) {
-        ytd_app.style.border = "none";
-        return;
+      const transcript_btn = document.querySelector(
+        'button[aria-label="Show transcript"]'
+      );
+
+      if (transcript_btn) {
+        ytd_app.style.border = "10px solid red";
+        console.log("Transcript Button Found");
+        transcript_btn.click();
+        observer.disconnect();
+        transcriptHandler();
       }
+      if (numberObserved >= 100) {
+        console.log("Exceeded observation limit, disconnecting observer");
+        ytd_app.style.border = "none";
+        observer.disconnect();
+      }
+    };
 
-      let debounceTimer;
-      let numberObserved = 0;
-      let isObserverDisconnected = false;
+    const observer = new MutationObserver(applyModificationsWhenReady);
 
-      const description_cont = document.querySelector("div#description");
-
-      const applyModificationsWhenReady = () => {
-        clearTimeout(debounceTimer);
-        numberObserved += 1;
-
-        if (isObserverDisconnected) {
-          return;
-        }
-
-        const transcript_btn = document.querySelector(
-          'button[aria-label="Show transcript"]'
-        );
-
-        if (transcript_btn) {
-          ytd_app.style.border = "10px solid red";
-          console.log("Transcript Button Found");
-          observer.disconnect();
-          isObserverDisconnected = true;
-          transcriptHandler();
-        } else if (numberObserved >= 20) {
-          console.log("Exceeded observation limit, disconnecting observer");
-          observer.disconnect();
-          isObserverDisconnected = true;
-          ytd_app.style.border = "none";
-        } else {
-          console.log("Transcript button not found yet");
-          debounceTimer = setTimeout(applyModificationsWhenReady, 1000);
-        }
-      };
-
-      const observer = new MutationObserver(() => {
-        debounceTimer = setTimeout(applyModificationsWhenReady, 1000);
-      });
-
-      observer.observe(description_cont, {
-        childList: true,
-        subtree: true,
-      });
-
-      observer.disconnect = () => {
-        isObserverDisconnected = true;
-        clearTimeout(debounceTimer);
-        MutationObserver.prototype.disconnect.call(observer);
-      };
-    }, 1000);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    applyModifications(window.location.href.includes("youtube.com/watch"));
+  });
+  window.addEventListener("yt-page-data-updated", () => {
+    applyModifications(window.location.href.includes("youtube.com/watch"));
+  });
 })();
