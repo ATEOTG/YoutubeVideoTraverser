@@ -16,38 +16,30 @@ export function separateTime(textArray) {
   return separatedData;
 }
 
+function unitEvaluator(unitValueArray) {
+  let seconds = 0;
+  for (let i = 0; i < unitValueArray.length; i++) {
+    const str = unitValueArray[i];
+    if (str.includes("second")) {
+      seconds += Number(str.match(/(\d+)/)[0]);
+    } else if (str.includes("minute")) {
+      seconds += Number(str.match(/(\d+)/)[0]) * 60;
+    } else {
+      seconds += Number(str.match(/(\d+)/)[0]) * 3600;
+    }
+  }
+  return seconds;
+}
+
 export function convertTimeFormatToSeconds(timeString) {
   const unitValueArray = timeString.split(",");
-  let seconds = 0;
   if (unitValueArray.length === 1) {
-    seconds = Number(unitValueArray[0].match(/(\d+)/)[0]);
-    return seconds;
+    return unitEvaluator(unitValueArray);
   }
   if (unitValueArray.length === 2) {
-    for (let i = 0; i < unitValueArray.length; i++) {
-      const str = unitValueArray[i];
-      if (i == 0) {
-        seconds += Number(str.match(/(\d+)/)[0]) * 60;
-      }
-      if (i === 1) {
-        seconds += Number(str.match(/(\d+)/)[0]);
-      }
-    }
-    return seconds;
+    return unitEvaluator(unitValueArray);
   }
   if (unitValueArray.length === 3) {
-    for (let i = 0; i < unitValueArray.length; i++) {
-      const str = unitValueArray[i];
-      if (i == 0) {
-        seconds += Number(str.match(/(\d+)/)[0]) * 3600;
-      }
-      if (i === 1) {
-        seconds += Number(str.match(/(\d+)/)[0]) * 60;
-      }
-      if (i === 2) {
-        seconds += Number(str.match(/(\d+)/)[0]);
-      }
-    }
-    return seconds;
+    return unitEvaluator(unitValueArray);
   }
 }
