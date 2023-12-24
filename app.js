@@ -24,40 +24,43 @@
   }
 
   function transcriptHandler() {
-    setTimeout(() => {
-      console.log("Transcript Handler running...");
+    const panel = document.querySelector("#panels");
+    panel.style.display = "block";
 
-      let observations = 0;
-      const checkInterval = setInterval(() => {
-        if (observations === 5) clearInterval(checkInterval);
-        console.log("Interval Running...");
-        const segments_cont = document.querySelector("#segments-container");
-        console.log("Segment_cont: " + segments_cont);
-        if (segments_cont) {
-          const segment_children = segments_cont.childNodes;
-          document.querySelector("#panels").style.display = "none";
-          segmentHandler(segment_children);
-          clearInterval(checkInterval);
-        } else {
-          document.querySelector("#panels").style.display = "block";
-        }
-        observations += 1;
-      }, 1000);
-    }, 1000);
+    let observations = 0;
+    const panelObserverHandler = (mutations, observer) => {
+      if (observations === 10) {
+        panel.style.display = "block";
+        observer.disconnect();
+      }
+      const segments_cont = document.querySelector("#segments-container");
+      console.log("Segment_cont: " + segments_cont);
+      if (segments_cont) {
+        const segment_children = segments_cont.childNodes;
+        panel.style.display = "none";
+        observer.disconnect();
+        segmentHandler(segment_children);
+      }
+      observations += 1;
+    };
+
+    const panelObserver = new MutationObserver(panelObserverHandler);
+
+    panelObserver.observe(panel, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   function applyModifications(isVideoPage) {
-    console.log("executed!!!");
     const ytd_app = document.querySelector("ytd-app[darker-dark-theme]");
 
     if (!isVideoPage) {
       ytd_app.style.border = "none";
       return;
     }
-
+    chrome.storage.local.set({ timeStamps: [] });
     let numberObserved = 0;
-
-    // const description_cont = document.querySelector("div#description");
 
     const applyModificationsWhenReady = (mutation, observer) => {
       youtubePlayer = document.getElementsByClassName("video-stream")[0];
@@ -75,7 +78,7 @@
         observer.disconnect();
         transcriptHandler();
       }
-      if (numberObserved >= 100) {
+      if (numberObserved >= 20) {
         console.log("Exceeded observation limit, disconnecting observer");
         ytd_app.style.border = "none";
         observer.disconnect();
