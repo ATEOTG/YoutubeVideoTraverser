@@ -4,6 +4,7 @@
   "description": "Grab the YouTube video transcription, search keywords, and extract timestamps for quick navigation to relevant sections.",
   "version": "1.0",
   "author": "ATEOTG",
+  "host_permissions": ["*://www.youtube.com/*"],
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
