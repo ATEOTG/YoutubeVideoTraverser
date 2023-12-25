@@ -9,11 +9,21 @@ const searchValue = document.querySelector("#search");
 const resultList = document.querySelector(".search-list");
 const notOnPage = document.querySelector(".not-on-page-cont");
 const onPage = document.querySelector(".on-page-cont");
+const cannotTranscribe = document.querySelector(".no-transcription");
+const noResults = document.querySelector("#no-results-text");
 
-function fetchTimeStamp() {
+async function fetchTimeStamp() {
   return new Promise((res) => {
     chrome.storage.local.get("timeStamps", (obj) => {
       res(obj["timeStamps"] ? obj["timeStamps"] : []);
+    });
+  });
+}
+
+function fetchIsTranscribable() {
+  return new Promise((res) => {
+    chrome.storage.local.get("isTranscribable", (obj) => {
+      res(obj["isTranscribable"] ? obj["isTranscribable"] : false);
     });
   });
 }
@@ -78,6 +88,7 @@ searchForm.addEventListener("submit", async (e) => {
 
   resultList.innerHTML = "";
   searchValue.value = "";
+  noResults.style.display = results.length === 0 ? "block" : "none";
   for (const timeStamp of results) {
     if (timeStamp[0] === null) continue;
     addItemToList(timeStamp);
@@ -86,9 +97,18 @@ searchForm.addEventListener("submit", async (e) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
+  const isTranscribable = await fetchIsTranscribable();
+
   if (activeTab.url.includes("youtube.com/watch")) {
     notOnPage.style.display = "none";
     onPage.style.display = "block";
+    if (isTranscribable) {
+      cannotTranscribe.style.display = "none";
+      onPage.style.display = "block";
+    } else {
+      cannotTranscribe.style.display = "block";
+      onPage.style.display = "none";
+    }
   } else {
     onPage.style.display = "none";
     notOnPage.style.display = "block";

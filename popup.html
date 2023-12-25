@@ -10,6 +10,21 @@
         font-size: 15px;
         font-weight: bold;
       }
+      input {
+        width: 50%;
+      }
+      #search-form {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      #no-results-text {
+        display: none;
+        font-style: italic;
+        font-size: larger;
+        font-weight: bold;
+      }
       .search-list-item span {
         margin-right: 5px;
         font-weight: bold;
@@ -24,10 +39,12 @@
         flex-direction: column;
         gap: 0.5rem;
         text-align: left;
+        padding: 0px 15px;
       }
       .search-list-item {
         border-bottom: 0.5px solid grey;
         padding-bottom: 0.5rem;
+        font-weight: bold;
       }
       .search-list-item:hover {
         cursor: pointer;
@@ -44,9 +61,15 @@
       .on-page-cont {
         display: none;
       }
+      .no-transcription {
+        display: none;
+      }
     </style>
   </head>
   <body>
+    <h2 class="no-transcription">
+      Unfortunately, this video has no transcription
+    </h2>
     <div class="not-on-page-cont">
       <h2>You're currently not on a Youtube Video Page!</h2>
     </div>
@@ -55,7 +78,7 @@
         <label for="search">Search keyword(s) in Video</label>
         <input type="text" name="search" id="search" placeholder="Keyword..." />
       </form>
-
+      <p id="no-results-text">No results found...</p>
       <ul class="search-list"></ul>
     </div>
 

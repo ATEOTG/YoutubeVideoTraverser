@@ -15,9 +15,8 @@
     "default_title": "Youtube Video Traverser",
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "tabs", "scripting", "storage"],
+  "permissions": ["activeTab", "tabs", "storage"],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   }
 }
