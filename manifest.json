@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Youtube Video Transcript Traverser",
+  "name": "Youtube Video Transcript Search",
   "description": "Grab the YouTube video transcription, search keywords, and extract timestamps for quick navigation to relevant sections.",
   "version": "1.0",
   "author": "ATEOTG",
