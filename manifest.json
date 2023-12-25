@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Youtube Video Transcript Traverser",
-  "description": "Search through a YouTube video for keywords and get timestamps for relevant sections of the video based on keyword searched and then be able to jump to that time on the youtube video.",
+  "description": "Search through a YouTube video for keywords and get timestamps and be able to jump to that relevant section/time on the video.",
   "version": "1.0",
   "author": "ATEOTG",
   "host_permissions": ["*://www.youtube.com/*"],
