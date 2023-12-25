@@ -12,6 +12,12 @@
     }
   ],
   "action": {
+    "default_icon": {
+      "16": "/assets/icon128.png",
+      "32": "/assets/icon128.png",
+      "48": "/assets/icon128.png",
+      "128": "/assets/icon128.png"
+    },
     "default_title": "Youtube Video Traverser",
     "default_popup": "popup.html"
   },
