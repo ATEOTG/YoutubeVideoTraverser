@@ -39,17 +39,19 @@ function searchResultHandler(string, timeStamps) {
   return res;
 }
 
-async function onPlay(e) {
+function onPlay(e) {
   let target = e.target;
   while (target.tagName !== "LI") {
     target = target.parentNode;
   }
   const itemTimeStamp = target.getAttribute("data-timestamp");
-  const activeTab = await getActiveTabURL();
 
-  chrome.tabs.sendMessage(activeTab.id, {
-    type: "PLAY",
-    value: itemTimeStamp,
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {
+      type: "PLAY",
+      value: itemTimeStamp,
+    });
   });
 }
 
@@ -95,22 +97,36 @@ searchForm.addEventListener("submit", async (e) => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const activeTab = await getActiveTabURL();
-  const isTranscribable = await fetchIsTranscribable();
-
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  const activeTab = tabs[0];
+  let isTranscribable;
   if (activeTab.url.includes("youtube.com/watch")) {
-    notOnPage.style.display = "none";
-    onPage.style.display = "block";
-    if (isTranscribable) {
-      cannotTranscribe.style.display = "none";
-      onPage.style.display = "block";
-    } else {
-      cannotTranscribe.style.display = "block";
-      onPage.style.display = "none";
-    }
+    chrome.tabs.sendMessage(
+      activeTab.id,
+      { type: "NEW", value: activeTab.id },
+      (response) => {
+        console.log("Message below");
+        console.log(response);
+        isTranscribable = response.res;
+
+        console.log("IsTrabscribable: " + isTranscribable);
+        notOnPage.style.display = "none";
+        onPage.style.display = "block";
+        if (isTranscribable) {
+          cannotTranscribe.style.display = "none";
+          onPage.style.display = "block";
+        } else {
+          cannotTranscribe.style.display = "block";
+          onPage.style.display = "none";
+        }
+      }
+    );
   } else {
     onPage.style.display = "none";
     notOnPage.style.display = "block";
   }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  // const activeTab = await getActiveTabURL();
+  // let isTranscribable;
 });
