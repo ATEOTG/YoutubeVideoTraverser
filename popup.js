@@ -7,6 +7,7 @@ const notOnPage = document.querySelector(".not-on-page-cont");
 const onPage = document.querySelector(".on-page-cont");
 const cannotTranscribe = document.querySelector(".no-transcription");
 const noResults = document.querySelector("#no-results-text");
+const errorMessage = document.querySelector(".error");
 
 async function fetchTimeStamp() {
   return new Promise((res) => {
@@ -95,6 +96,7 @@ searchForm.addEventListener("submit", async (e) => {
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const activeTab = tabs[0];
+
   console.log(activeTab);
   let isTranscribable;
   if (activeTab.url.includes("youtube.com/watch")) {
@@ -102,19 +104,35 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       activeTab.id,
       { type: "NEW", value: activeTab.url },
       (response) => {
-        console.log("Message below");
-        console.log(response);
-        isTranscribable = response.res;
+        if (!chrome.runtime.lastError) {
+          if (response === undefined) {
+            errorMessage.style.display = "block";
 
-        console.log("IsTrabscribable: " + isTranscribable);
-        notOnPage.style.display = "none";
-        onPage.style.display = "block";
-        if (isTranscribable) {
-          cannotTranscribe.style.display = "none";
-          onPage.style.display = "block";
+            console.error(
+              "Response is undefined. This may be due to too many requests the extension have made. Give it some time and try again via reloading"
+            );
+          } else {
+            errorMessage.style.display = "none";
+            console.log("Message below");
+            console.log(response);
+            isTranscribable = response.res;
+
+            console.log("IsTrabscribable: " + isTranscribable);
+            notOnPage.style.display = "none";
+            onPage.style.display = "block";
+            if (isTranscribable) {
+              cannotTranscribe.style.display = "none";
+              onPage.style.display = "block";
+            } else {
+              cannotTranscribe.style.display = "block";
+              onPage.style.display = "none";
+            }
+          }
         } else {
-          cannotTranscribe.style.display = "block";
-          onPage.style.display = "none";
+          errorMessage.style.display = "block";
+          console.log(
+            "An errored occured for unknown reasons. Try reloading the tab."
+          );
         }
       }
     );
@@ -123,6 +141,3 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     notOnPage.style.display = "block";
   }
 });
-// document.addEventListener("DOMContentLoaded", () => {
-
-// });

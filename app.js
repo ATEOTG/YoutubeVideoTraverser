@@ -1,10 +1,12 @@
 (() => {
+  console.log("injected on to page");
   let youtubePlayer;
   let tabURL = null;
   let timeStampStringList = [];
   let isTranscribable = null;
 
   function newHandler(value, sendResponse) {
+    console.log("NEW HANDLER EXECUTING");
     console.log("tabURL: " + tabURL);
     if (tabURL === null) {
       tabURL = value;
@@ -37,6 +39,7 @@
     const { type, value } = obj;
 
     if (type === "NEW") {
+      console.log("IN NEW BLOCK");
       console.log("Type: " + type + " Value: " + value);
       newHandler(value, sendResponse);
       // return true;
@@ -45,6 +48,7 @@
       youtubePlayer.currentTime = value;
       sendResponse({ message: "success" });
     }
+
     // if (type === "TEST") {
     //   console.log("TEST running swimmingly");
     //   sendResponse({ message: true });
