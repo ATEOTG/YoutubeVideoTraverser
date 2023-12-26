@@ -39,6 +39,7 @@
     if (type === "NEW") {
       console.log("Type: " + type + " Value: " + value);
       newHandler(value, sendResponse);
+      // return true;
     }
     if (type === "PLAY") {
       youtubePlayer.currentTime = value;
@@ -48,7 +49,7 @@
     //   sendResponse({ message: true });
     // }
 
-    // return true;
+    return true;
   });
 
   function segmentHandler(segment_children) {
