@@ -1,8 +1,4 @@
-import {
-  getActiveTabURL,
-  convertTimeFormatToSeconds,
-  separateTime,
-} from "./utils.js";
+import { convertTimeFormatToSeconds, separateTime } from "./utils.js";
 
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
