@@ -10,12 +10,9 @@
       tabId = value;
       console.log(tabId);
 
-      try {
-        const response = applyModifications();
-        sendResponse({ res: response });
-      } catch (err) {
-        sendResponse({ res: false });
-      }
+      const response = applyModifications();
+      console.log("Response: " + response);
+      sendResponse({ res: response });
     } else {
       console.log(
         "tabId: " + tabId + " timeStrampString: " + timeStampStringList
@@ -27,6 +24,7 @@
   }
 
   chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
+    console.log("Event listener executing");
     const { type, value } = obj;
 
     if (type === "NEW") {
@@ -36,12 +34,12 @@
     if (type === "PLAY") {
       youtubePlayer.currentTime = value;
     }
-    if (type === "TEST") {
-      console.log("TEST running swimmingly");
-      sendResponse({ message: true });
-    }
+    // if (type === "TEST") {
+    //   console.log("TEST running swimmingly");
+    //   sendResponse({ message: true });
+    // }
 
-    return true;
+    // return true;
   });
 
   function segmentHandler(segment_children) {
@@ -79,7 +77,7 @@
     });
   }
 
-  function applyModifications(isVideoPage) {
+  function applyModifications() {
     // if (!isVideoPage) {
     //   return;
     // }
@@ -102,11 +100,11 @@
       panel.style.display = "flex";
       transcriptHandler(transcript_btn, panel);
       isTranscribable = true;
-      return isTranscribable;
+      return true;
       // observer.disconnect();
     } else {
       isTranscribable = false;
-      return isTranscribable;
+      return false;
       // isTranscribable = false;
       // await chrome.storage.local.set({ isTranscribable: isTranscribable });
     }

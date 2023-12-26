@@ -20,13 +20,13 @@ async function fetchTimeStamp() {
   });
 }
 
-function fetchIsTranscribable() {
-  return new Promise((res) => {
-    chrome.storage.local.get("isTranscribable", (obj) => {
-      res(obj["isTranscribable"] ? obj["isTranscribable"] : false);
-    });
-  });
-}
+// function fetchIsTranscribable() {
+//   return new Promise((res) => {
+//     chrome.storage.local.get("isTranscribable", (obj) => {
+//       res(obj["isTranscribable"] ? obj["isTranscribable"] : false);
+//     });
+//   });
+// }
 
 function searchResultHandler(string, timeStamps) {
   const res = [];
@@ -126,7 +126,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     notOnPage.style.display = "block";
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  // const activeTab = await getActiveTabURL();
-  // let isTranscribable;
-});
+// document.addEventListener("DOMContentLoaded", () => {
+
+// });
