@@ -43,6 +43,7 @@
     }
     if (type === "PLAY") {
       youtubePlayer.currentTime = value;
+      sendResponse({ message: "success" });
     }
     // if (type === "TEST") {
     //   console.log("TEST running swimmingly");
