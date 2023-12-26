@@ -1,8 +1,4 @@
-import {
-  getActiveTabURL,
-  convertTimeFormatToSeconds,
-  separateTime,
-} from "./utils.js";
+import { convertTimeFormatToSeconds, separateTime } from "./utils.js";
 
 const searchForm = document.querySelector("#search-form");
 const searchValue = document.querySelector("#search");
@@ -11,19 +7,12 @@ const notOnPage = document.querySelector(".not-on-page-cont");
 const onPage = document.querySelector(".on-page-cont");
 const cannotTranscribe = document.querySelector(".no-transcription");
 const noResults = document.querySelector("#no-results-text");
+const errorMessage = document.querySelector(".error");
 
 async function fetchTimeStamp() {
   return new Promise((res) => {
     chrome.storage.local.get("timeStamps", (obj) => {
       res(obj["timeStamps"] ? obj["timeStamps"] : []);
-    });
-  });
-}
-
-function fetchIsTranscribable() {
-  return new Promise((res) => {
-    chrome.storage.local.get("isTranscribable", (obj) => {
-      res(obj["isTranscribable"] ? obj["isTranscribable"] : false);
     });
   });
 }
@@ -39,17 +28,19 @@ function searchResultHandler(string, timeStamps) {
   return res;
 }
 
-async function onPlay(e) {
+function onPlay(e) {
   let target = e.target;
   while (target.tagName !== "LI") {
     target = target.parentNode;
   }
   const itemTimeStamp = target.getAttribute("data-timestamp");
-  const activeTab = await getActiveTabURL();
 
-  chrome.tabs.sendMessage(activeTab.id, {
-    type: "PLAY",
-    value: itemTimeStamp,
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {
+      type: "PLAY",
+      value: itemTimeStamp,
+    });
   });
 }
 
@@ -95,20 +86,45 @@ searchForm.addEventListener("submit", async (e) => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const activeTab = await getActiveTabURL();
-  const isTranscribable = await fetchIsTranscribable();
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  const activeTab = tabs[0];
 
+  let isTranscribable;
   if (activeTab.url.includes("youtube.com/watch")) {
-    notOnPage.style.display = "none";
-    onPage.style.display = "block";
-    if (isTranscribable) {
-      cannotTranscribe.style.display = "none";
-      onPage.style.display = "block";
-    } else {
-      cannotTranscribe.style.display = "block";
-      onPage.style.display = "none";
-    }
+    chrome.tabs.sendMessage(
+      activeTab.id,
+      { type: "NEW", value: activeTab.url },
+      (response) => {
+        if (!chrome.runtime.lastError) {
+          if (response === undefined) {
+            errorMessage.style.display = "block";
+
+            console.error(
+              "Response is undefined. This may be due to too many requests the extension have made. Give it some time and try again via reloading"
+            );
+          } else {
+            errorMessage.style.display = "none";
+
+            isTranscribable = response.res;
+
+            notOnPage.style.display = "none";
+            onPage.style.display = "block";
+            if (isTranscribable) {
+              cannotTranscribe.style.display = "none";
+              onPage.style.display = "block";
+            } else {
+              cannotTranscribe.style.display = "block";
+              onPage.style.display = "none";
+            }
+          }
+        } else {
+          errorMessage.style.display = "block";
+          console.log(
+            "An errored occured for unknown reasons. Try reloading the tab."
+          );
+        }
+      }
+    );
   } else {
     onPage.style.display = "none";
     notOnPage.style.display = "block";
