@@ -1,25 +1,34 @@
 (() => {
   let youtubePlayer;
-  let tabId = null;
+  let tabURL = null;
   let timeStampStringList = [];
   let isTranscribable = null;
 
   function newHandler(value, sendResponse) {
-    console.log("tabId: " + tabId);
-    if (tabId === null) {
-      tabId = value;
-      console.log(tabId);
+    console.log("tabURL: " + tabURL);
+    if (tabURL === null) {
+      tabURL = value;
+      console.log(tabURL);
 
       const response = applyModifications();
       console.log("Response: " + response);
       sendResponse({ res: response });
     } else {
-      console.log(
-        "tabId: " + tabId + " timeStrampString: " + timeStampStringList
-      );
-      chrome.storage.local.set({ timeStamps: timeStampStringList });
-      console.log("IsTrabscribible: " + isTranscribable);
-      sendResponse({ res: isTranscribable });
+      if (tabURL === value) {
+        console.log(
+          "tabURL: " + tabURL + " timeStrampString: " + timeStampStringList
+        );
+        chrome.storage.local.set({ timeStamps: timeStampStringList });
+        console.log("IsTrabscribible: " + isTranscribable);
+        sendResponse({ res: isTranscribable });
+      } else {
+        tabURL = value;
+        console.log(tabURL);
+
+        const response = applyModifications();
+        console.log("Response: " + response);
+        sendResponse({ res: response });
+      }
     }
   }
 

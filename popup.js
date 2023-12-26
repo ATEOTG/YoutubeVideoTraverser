@@ -99,11 +99,12 @@ searchForm.addEventListener("submit", async (e) => {
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const activeTab = tabs[0];
+  console.log(activeTab);
   let isTranscribable;
   if (activeTab.url.includes("youtube.com/watch")) {
     chrome.tabs.sendMessage(
       activeTab.id,
-      { type: "NEW", value: activeTab.id },
+      { type: "NEW", value: activeTab.url },
       (response) => {
         console.log("Message below");
         console.log(response);
