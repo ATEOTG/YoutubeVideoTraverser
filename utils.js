@@ -1,22 +1,3 @@
-// export async function getActiveTabURL() {
-//   let queryOptions = { active: true, currentWindow: true };
-//   let [tab] = await chrome.tabs.query(queryOptions);
-//   return tab;
-// }
-
-export function getActiveTabURL() {
-  return new Promise((resolve, reject) => {
-    let queryOptions = { active: true, currentWindow: true };
-    chrome.tabs.query(queryOptions, (tabs) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve(tabs[0]);
-      }
-    });
-  });
-}
-
 export function separateTime(textArray) {
   const separatedData = textArray.map((text) => {
     const timeRegex =

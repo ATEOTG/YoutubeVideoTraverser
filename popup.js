@@ -17,14 +17,6 @@ async function fetchTimeStamp() {
   });
 }
 
-// function fetchIsTranscribable() {
-//   return new Promise((res) => {
-//     chrome.storage.local.get("isTranscribable", (obj) => {
-//       res(obj["isTranscribable"] ? obj["isTranscribable"] : false);
-//     });
-//   });
-// }
-
 function searchResultHandler(string, timeStamps) {
   const res = [];
   for (let i = 0; i < timeStamps.length; i++) {
@@ -97,7 +89,6 @@ searchForm.addEventListener("submit", async (e) => {
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const activeTab = tabs[0];
 
-  console.log(activeTab);
   let isTranscribable;
   if (activeTab.url.includes("youtube.com/watch")) {
     chrome.tabs.sendMessage(
@@ -113,11 +104,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             );
           } else {
             errorMessage.style.display = "none";
-            console.log("Message below");
-            console.log(response);
+
             isTranscribable = response.res;
 
-            console.log("IsTrabscribable: " + isTranscribable);
             notOnPage.style.display = "none";
             onPage.style.display = "block";
             if (isTranscribable) {
